@@ -26,7 +26,13 @@ class _Session(object):
         self.request_session = self._init_session()
         return self.access_token
 
+    
+    def remove_refresh_token(self, refresh_token=''):
+        remove_url = f'https://accounts.zoho.eu/oauth/v2/token/revoke?token={refresh_token if refresh_token else self.refresh_token}'
+        requests.post(url)
+        return True
 
+    
     def _init_session(self, access_token=None):
         session = requests.Session()
         session.headers["Authorization"] = f"Zoho-oauthtoken {self.access_token}"
@@ -90,6 +96,10 @@ class ZOHOClient(object):
     
     def update_access_token(self):
         return self._session.update_access_token()
+
+
+    def remove_refresh_token(self):
+        return self._session.remove_refresh_token()
 
 
     def __call__(self, method_name, method_kwargs={}):
