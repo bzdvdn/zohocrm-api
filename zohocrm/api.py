@@ -6,6 +6,7 @@ VALID_ENTITIES = (
     'leads', 'contacts', 'accounts', 'deals', 'campaigns', 'tasks',
     'cases', 'events', 'calls', 'solutions', 'products', 'vendors',
     'sales_orders', 'purchase_orders', 'invoices', 'price_books',
+    'users','org','roles','profiles'
 )
 
 class _Session(object):
