@@ -40,16 +40,30 @@ class _Session(object):
         return session
 
 
-    def _send_api_request(self, service, http_method='get', object_id=None, params={}):
-        url = f"{self.API_URL}{service}/{object_id}" if object_id else f"{self.API_URL}{service}"
-        if http_method == 'get' and params:
-            url += "&"+urlencode(params) if "?" in url else "?"+urlencode(params)
+    def __send_request(self, http_method, url, params):
         response = self.request_session.__getattribute__(http_method)(url, data=params)
         if response.status_code == 401:
             self.update_access_token()
             response = self.request_session.__getattribute__(http_method)(url, data=params)
+        return response
+
+    
+    def _send_api_request(self, service, http_method='get', object_id=None, params={}):
+        url = f"{self.API_URL}{service}/{object_id}" if object_id else f"{self.API_URL}{service}"
+        if http_method == 'get' and params:
+            url += "&"+urlencode(params) if "?" in url else "?"+urlencode(params)
+        response = self.__send_request(http_method, url, params)
         try:
-            return response.json()
+            response_data = response.json()
+            data_key = [key for key in response_data if key != 'info'][0]
+            data = {data_key: response_data[data_key]}
+            if "info" in response_data:
+                info = response_data["info"]
+                while info["more_records"]:
+                    page_url = f"{url}&page{info['page']+1}"
+                    response = self.__send_request(http_method, page_url, params).json()
+                    data[data_key].extend(response[data_key])
+            return data
         except json.JSONDecodeError:
             return response.text
 
