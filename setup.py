@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='zohocrm-api',
-    version='0.0.4',
+    version='0.0.5',
     packages=find_packages(),
-    install_requires = [
+    install_requires=[
         'requests>=2.18.2'
     ],
     description='ZOHOCRM rest api wrapper',
